@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ExcelSettingMapper">
+    <insert id="saveExcel" parameterType="pd">
+        insert into tb_excel
+                (id, original_name, new_name, url, magnitude, user_id, parent_id, status, type, view, created_time, update_time)
+        VALUES (#{id}, #{original_name}, #{new_name}, #{url}, #{magnitude}, #{user_id}, #{parent_id}, #{status}, #{type}, #{view},#{created_time}, update_time)
+    </insert>
+
+    <insert id="saveNorm" parameterType="pd">
+        insert into tb_norm(id, excel_id,
+        <if test="name != null and name != ''">
+            `NAME`,
+        </if>
+        <if test="unit != null and unit != ''">
+            unit,
+        </if>
+        <if test="content != null and content != ''">
+            content,
+        </if>
+        <if test="total_score != null and total_score != ''">
+            total_score,
+        </if>
+        <if test="score_time != null and score_time != ''">
+            score_time,
+        </if>
+        <if test="other != null and other != ''">
+            other,
+        </if>
+        <if test="user_id != null and user_id != ''">
+            user_id,
+        </if>
+        <if test="status != null and status != ''">
+            STATUS,
+        </if>
+        <if test="type != null and type != ''">
+            `type`,
+        </if>
+        <if test="view != null and view != ''">
+            `VIEW`,
+        </if>
+        <if test="created_time != null and created_time != ''">
+            created_time,
+        </if>
+        update_time) values (#{id}, #{excel_id},
+        <if test="name != null and name != ''">
+            #{name},
+        </if>
+        <if test="unit != null and unit != ''">
+            #{unit},
+        </if>
+        <if test="content != null and content != ''">
+            #{content},
+        </if>
+        <if test="total_score != null and total_score != ''">
+            #{total_score},
+        </if>
+        <if test="score_time != null and score_time != ''">
+            #{score_time},
+        </if>
+        <if test="other != null and other != ''">
+            #{other},
+        </if>
+        <if test="user_id != null and user_id != ''">
+            #{user_id},
+        </if>
+        <if test="status != null and status != ''">
+            #{status},
+        </if>
+        <if test="type != null and type != ''">
+            #{type},
+        </if>
+        <if test="view != null and view != ''">
+            #{view},
+        </if>
+        <if test="created_time != null and created_time != ''">
+            #{created_time},
+        </if>
+        null)
+    </insert>
+
+    <select id="queryExcelByUser" parameterType="java.lang.String" resultType="java.lang.String">
+        select tb_excel.user_id
+        from tb_excel where id = #{id};
+    </select>
+
+    <insert id="saveNormDetail" parameterType="pd">
+        insert into tb_norm_detail (id, norm_id,
+        <if test="serial != null and serial != ''">
+            serial,
+        </if>
+        <if test="item != null and item != ''">
+            item,
+        </if>
+        <if test="untitled != null and untitled != ''">
+            untitled,
+        </if>
+        <if test="content != null and content != ''">
+            content,
+        </if>
+        <if test="total_score != null and total_score != ''">
+            total_score,
+        </if>
+        <if test="score != null and score != ''">
+            score,
+        </if>
+        <if test="mode != null and mode != ''">
+            MODE,
+        </if>
+        <if test="standard != null and standard != ''">
+            standard,
+        </if>
+        <if test="other != null and other != ''">
+            other,
+        </if>
+        <if test="user_id != null and user_id != ''">
+            user_id,
+        </if>
+        <if test="status != null and status != ''">
+            STATUS,
+        </if>
+        <if test="type != null and type != ''">
+            type,
+        </if>
+        <if test="view != null and view != ''">
+            VIEW,
+        </if>
+        <if test="created_time != null and created_time != ''">
+            created_time,
+        </if>
+        update_time) values (#{id}, #{norm_id},
+        <if test="serial != null and serial != ''">
+            #{serial},
+        </if>
+        <if test="item != null and item != ''">
+            #{item},
+        </if>
+        <if test="untitled != null and untitled != ''">
+            #{untitled},
+        </if>
+        <if test="content != null and content != ''">
+            #{content},
+        </if>
+        <if test="total_score != null and total_score != ''">
+            #{total_score},
+        </if>
+        <if test="score != null and score != ''">
+            #{score},
+        </if>
+        <if test="mode != null and mode != ''">
+            #{mode},
+        </if>
+        <if test="standard != null and standard != ''">
+            #{standard},
+        </if>
+        <if test="other != null and other != ''">
+            #{other},
+        </if>
+        <if test="user_id != null and user_id != ''">
+            #{user_id},
+        </if>
+        <if test="status != null and status != ''">
+            #{status},
+        </if>
+        <if test="type != null and type != ''">
+            #{type},
+        </if>
+        <if test="view != null and view != ''">
+            #{view},
+        </if>
+        <if test="created_time != null and created_time != ''">
+            #{created_time},
+        </if>
+        null)
+    </insert>
+
+    <update id="updateExcel" parameterType="pd">
+        update tb_excel
+        set status=#{status},
+            update_time=now()
+        where id = #{id}
+    </update>
+
+    <update id="updateExcelView" parameterType="pd">
+        update tb_excel
+        set view=#{status},
+        update_time=now()
+        where id = #{id}
+    </update>
+
+    <update id="updateNorm" parameterType="pd">
+        update tb_norm
+        set status=#{status},
+            update_time=now()
+        where excel_id = #{id}
+    </update>
+
+    <update id="deleteNormDetail" parameterType="pd">
+        update tb_norm_detail
+        set status=3,
+            update_time=now()
+        where norm_id = #{norm_id}
+    </update>
+
+    <select id="queryNormExcelById" parameterType="pd" resultType="pd">
+        select id
+        from tb_norm
+        where excel_id = #{id}
+    </select>
+
+    <insert id="creatUserToNorm" parameterType="pd">
+        insert into tb_excel_user (excel_id, user_id)
+        values (#{excel_id}, #{user_id});
+    </insert>
+
+    <update id="updateNormAllotLeader" parameterType="pd">
+        update tb_excel
+        set view=1
+        where id = #{id}
+    </update>
+
+    <update id="updateNormByExcel" parameterType="pd">
+        update tb_norm
+        set view=1
+        where id = #{id}
+    </update>
+
+    <select id="queryAllot" resultType="String" parameterType="String">
+        select tb_excel_user.user_id
+        from tb_excel_user
+        where excel_id = #{id}
+    </select>
+
+    <delete id="deleteExcelByUser" parameterType="pd">
+        delete
+        from tb_excel_user
+        where tb_excel_user.excel_id = #{excel_id}
+    </delete>
+
+    <update id="rename" parameterType="pd">
+        update tb_excel
+        set new_name=#{name},
+            update_time = now()
+        where id = #{id}
+    </update>
+
+    <select id="datalistPage" parameterType="page" resultType="pd" useCache="false">
+        select excel.id,
+               excel.original_name,
+               excel.new_name,
+               excel.url,
+               excel.user_id,
+               excel.magnitude,
+               excel.parent_id,
+               excel.status,
+               excel.type,
+               excel.view,
+               excel.created_time,
+               excel.update_time,
+               tb_excel_user.user_id as uid
+                from (select tb_excel.*
+                      from tb_excel where tb_excel.status != 3
+        <if test="pd.search != null and pd.search != ''">
+            and (new_name like CONCAT(CONCAT('%', #{pd.search}),'%'))
+        </if>)excel
+            left join tb_excel_user on excel.id = tb_excel_user.excel_id
+            where excel.user_id = #{pd.uid}
+               or tb_excel_user.user_id = #{pd.uid}
+            group by excel.id
+        order by excel.created_time desc
+    </select>
+
+
+
+
+
+    <resultMap id="excelOneAndTwo" type="com.fh.entity.app.Excel">
+        <result property="id" column="id"/>
+        <result property="new_name" column="new_name"/>
+        <result property="user_id" column="user_id"/>
+    </resultMap>
+
+    <select id="queryExcelOneAndTwo" resultMap="excelOneAndTwo">
+        select id,new_name,tb_excel.user_id,tb_excel.STATUS
+        from tb_excel
+        left join tb_excel_user on tb_excel.id = tb_excel_user.excel_id
+        where tb_excel.user_id = #{uid}
+        or tb_excel_user.user_id = #{uid}
+        group by tb_excel.id
+        having STATUS = 1
+    </select>
+
+    <select id="queryExcelByNorm" parameterType="java.lang.String" resultType="com.fh.entity.app.Norm">
+        select id,NAME as name from tb_norm where excel_id=#{id} and tb_norm.STATUS = 1
+    </select>
+
+    <select id="queryExcelByNormDetail" parameterType="java.lang.String" resultType="com.fh.entity.app.NormDetail">
+        select * from tb_norm_detail where norm_id=#{id} and STATUS = 1
+        AND serial IS NOT NULL
+        AND ascii(serial) &lt; '127'
+    </select>
+
+    <select id="queryUserBySpecialty" parameterType="java.lang.String" resultType="pd">
+        select sys_user.USER_ID, sys_user.NAME
+        from sys_user
+                     left join sys_role on sys_user.ROLE_ID = sys_role.ROLE_ID
+                     left join tb_function on sys_role.FUNCTION_ID = tb_function.FUNCTION_ID
+        where tb_function.FUNCTION_ID = #{id}
+    </select>
+
+    <select id="queryExcelList" resultType="pd">
+        select tb_excel.id, tb_excel.new_name
+        from tb_excel
+        where status = 1
+          and type = 1
+          and view = 1;
+    </select>
+
+    <select id="queryUserByRoue" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select tb_function.FUNCTION_ID
+        from sys_user
+                     left join sys_role on sys_user.ROLE_ID = sys_role.ROLE_ID
+                     left join tb_function on sys_role.FUNCTION_ID = tb_function.FUNCTION_ID
+        where sys_user.USER_ID = #{user_id}
+    </select>
+
+    <select id="listUserExecel" parameterType="pd" resultType="pd">
+        select excel_id from  tb_excel_user  where user_id = #{USER_ID}
+    </select>
+
+    <!-- 列表(全部) -->
+    <select id="listUserExecelsecond" parameterType="String" resultType="pd">
+        select a.original_name from tb_excel a
+        where   id in
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="listUsertaskid" parameterType="pd" resultType="pd">
+        select task_id from  tb_task_user  where user_id = #{USER_ID}
+    </select>
+
+    <select id="queryNormDetailName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT tb_norm_detail.item from tb_norm_detail where norm_id=(SELECT tb_norm_detail.norm_id from tb_norm_detail where id = (SELECT tb_task_row.norm_detail_id from tb_task_row where id = #{id})) and tb_norm_detail.serial=(SELECT left(tb_norm_detail.serial,1) from tb_norm_detail where tb_norm_detail.id = (SELECT tb_task_row.norm_detail_id from tb_task_row where id = #{id}))
+    </select>
+
+
+    <select id="queryNormDetailSerial"  parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT tb_norm_detail.serial from tb_norm_detail where id=(SELECT tb_task_row.norm_detail_id from tb_task_row where id = #{id})
+    </select>
+
+    <select id="queryIssueTime"  parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT tb_task_row.operating_time from tb_task_row where id =#{id}
+    </select>
+
+
+
+    <select id="querytaskcheckId"  parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT tb_task_censor.user_id from tb_task_censor where id =#{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,233 @@
+package com.fh.controller.app;
+
+import com.fh.controller.base.BaseController;
+import com.fh.entity.app.CensorRowIssue;
+import com.fh.entity.app.TaskCensorRes;
+import com.fh.service.app.TaskService;
+import com.fh.util.PageData;
+import com.fh.util.ResultModel;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1")
+@Api(tags = "oh任务接口管理")
+public class TaskController extends BaseController {
+
+    @Autowired
+    TaskService taskService;
+
+
+    @Resource(name = "redisTemplate")
+    private RedisTemplate redisTemplate;
+
+    /**
+     * 任务列表
+     * @throws Exception
+     */
+    @RequestMapping(value = "/queryTaskList", method = RequestMethod.POST)
+    @ApiOperation("任务列表")
+    public ResultModel<List<PageData>> queryTaskList() throws Exception {
+        List<PageData> message = taskService.queryTaskList(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 检查任务详情
+     * @throws Exception
+     */
+    @RequestMapping(value = "/checkingTaskList", method = RequestMethod.POST)
+    @ApiOperation("检查任务详情")
+    public ResultModel<List<TaskCensorRes>> checkingTaskList() throws Exception {
+        List<TaskCensorRes> message = taskService.checkingTaskList(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 组员任务整改任务上报组长拉去
+     * @throws Exception
+     */
+    @RequestMapping(value = "/queryCheckReportUser", method = RequestMethod.POST)
+    @ApiOperation("组员任务整改任务上报数据拉去")
+    public ResultModel<PageData> queryCheckReportUser() throws Exception {
+        PageData message = taskService.queryCheckReportUser(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+
+    /**
+     * 创建任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/createdTask", method = RequestMethod.POST)
+    @ApiOperation("创建任务")
+    public ResultModel<String> createdTask() throws Exception {
+        String message = taskService.createdTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+
+    /**
+     * 查询单个任务(编辑操作)
+     * @throws Exception
+     */
+    @RequestMapping(value = "/queryTaskToOne", method = RequestMethod.POST)
+    @ApiOperation("查询单个任务(编辑操作)")
+    public ResultModel<PageData> queryTaskToOne() throws Exception {
+        PageData message = taskService.queryTaskToOne(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 修改任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/editTask", method = RequestMethod.POST)
+    @ApiOperation("修改任务")
+    public ResultModel<String> editTask() throws Exception {
+        String message =taskService.editTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 删除任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/deleteTask", method = RequestMethod.POST)
+    @ApiOperation("删除任务")
+    public ResultModel<String> deleteTask() throws Exception {
+        String message =taskService.deleteTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 正常检查任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/checkingTask", method = RequestMethod.POST)
+    @ApiOperation("正常检查任务")
+    public ResultModel<String> checkingTask() throws Exception {
+        String message =taskService.checkingTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 取消正常检查任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/cancelCheckingTask", method = RequestMethod.POST)
+    @ApiOperation("取消正常检查任务")
+    public ResultModel<String> cancelCheckingTask() throws Exception {
+        String message =taskService.cancelCheckingTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 问题检查任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/IssueCheckingTask", method = RequestMethod.POST)
+    @ApiOperation("问题检查任务")
+    public ResultModel<String> IssueCheckingTask() throws Exception {
+        String message =taskService.IssueCheckingTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 编辑问题检查任务
+     * @throws Exception
+     */
+    @RequestMapping(value = "/cancelIssueCheckingTask", method = RequestMethod.POST)
+    @ApiOperation("编辑问题检查任务")
+    public ResultModel<String> cancelIssueCheckingTask() throws Exception {
+        String message =taskService.cancelIssueCheckingTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 问题整改检查任务详情
+     * @throws Exception
+     */
+    @RequestMapping(value = "/createdTaskIssue", method = RequestMethod.POST)
+    @ApiOperation("问题整改检查任务详情")
+    public ResultModel<String> createdTaskIssue() throws Exception {
+        String message = taskService.createdTaskIssue(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 查询当前行的检查状态
+     * @throws Exception
+     */
+    @RequestMapping(value = "/queryTaskDetailRowCheck", method = RequestMethod.POST)
+    @ApiOperation("查询当前行的检查状态")
+    public ResultModel<PageData> queryTaskDetailRowCheck() throws Exception {
+        PageData pd = taskService.queryTaskDetailRowCheck(this.getPageData());
+        return ResultModel.success(pd);
+    }
+
+
+    /**
+     * 任务上报
+     * @throws Exception
+     */
+    @RequestMapping(value = "/escalationTask", method = RequestMethod.POST)
+    @ApiOperation("任务上报")
+    public ResultModel<String> escalationTask() throws Exception {
+        String message = taskService.escalationTask(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 正常图片上传
+     * @throws Exception
+     */
+    @RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
+    @ApiOperation("正常图片上传")
+    public ResultModel<PageData> uploadImage(HttpServletRequest request, @RequestParam("image") MultipartFile file) throws Exception {
+        PageData message =taskService.uploadImage(request,file);
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 整改图片上传
+     * @throws Exception
+     */
+    @RequestMapping(value = "/uploadImageReport", method = RequestMethod.POST)
+    @ApiOperation("整改图片上传")
+    public ResultModel<PageData> uploadImageReport(HttpServletRequest request, @RequestParam("image") MultipartFile file) throws Exception {
+        PageData message =taskService.uploadImageReport(request,file);
+        return ResultModel.success(message);
+    }
+
+    /**
+     * 删除图片
+     * @throws Exception
+     */
+    @RequestMapping(value = "/deleteImage", method = RequestMethod.POST)
+    @ApiOperation("删除图片")
+    public ResultModel<String> deleteImage() throws Exception {
+        String message = taskService.deleteImage(this.getPageData());
+        return ResultModel.success(message);
+    }
+
+
+    /**
+     * 发送验证码
+     * @throws Exception
+     */
+    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
+    @ApiOperation("发送验证码")
+    public ResultModel<List<PageData>> sendMessage() throws Exception {
+        redisTemplate.opsForValue().set("18583791159", "1234");
+        return ResultModel.success(null);
+    }
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserProjectControllerMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TB_USERPROJECTUSERPROJECTCONTROLLER(
+			USER_ID,	
+			PROJECT_ID,	
+			USERPROJECTCONTROLLER_ID
+		) values (
+			#{USER_ID},	
+			#{PROJECT_ID},	
+			#{USERPROJECTCONTROLLER_ID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TB_USERPROJECTUSERPROJECTCONTROLLER
+		where 
+			USERPROJECTCONTROLLER_ID = #{USERPROJECTCONTROLLER_ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TB_USERPROJECTUSERPROJECTCONTROLLER
+			set 
+				USER_ID = #{USER_ID},
+				PROJECT_ID = #{PROJECT_ID},
+			USERPROJECTCONTROLLER_ID = USERPROJECTCONTROLLER_ID
+			where 
+				USERPROJECTCONTROLLER_ID = #{USERPROJECTCONTROLLER_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			USER_ID,	
+			PROJECT_ID,	
+			USERPROJECTCONTROLLER_ID
+		from 
+			TB_USERPROJECTUSERPROJECTCONTROLLER
+		where 
+			USERPROJECTCONTROLLER_ID = #{USERPROJECTCONTROLLER_ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.USER_ID,	
+				a.PROJECT_ID,	
+				a.USERPROJECTCONTROLLER_ID
+		from 
+				TB_USERPROJECTUSERPROJECTCONTROLLER a
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.USER_ID,	
+				a.PROJECT_ID,	
+				a.USERPROJECTCONTROLLER_ID
+		from 
+				TB_USERPROJECTUSERPROJECTCONTROLLER a
+	</select>
+
+
+	<!-- 通过用户id获取项目id -->
+	<select id="findByUserId" parameterType="pd" resultType="java.lang.String">
+		select
+				a.PROJECT_ID
+		from
+				TB_USERPROJECTUSERPROJECTCONTROLLER a
+		where
+		a.USER_ID = #{USER_ID}
+	</select>
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TB_USERPROJECTUSERPROJECTCONTROLLER
+		where 
+			USERPROJECTCONTROLLER_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,110 @@
+package com.fh.config;
+
+import com.fh.dao.DaoSupport;
+import com.fh.service.app.TaskService;
+import com.fh.util.PageData;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import static com.fh.config.DelayedRabbitMQConfig.DELAYED_QUEUE_NAME;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+
+@Component
+public class DeadLetterQueueConsumer {
+
+
+    @Autowired
+    TaskService taskService;
+
+    @Resource(name = "daoSupport")
+    private DaoSupport dao;
+
+//    @Resource(name = "delayMessageSender")
+//    private DelayMessageSender sender;
+
+
+    private SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
+
+   //@RabbitListener(queues = DELAYED_QUEUE_NAME)
+//    public void receiveD(Message message, Channel channel) throws IOException {
+//        String str = new String(message.getBody());
+//        String[] split = str.split(",");
+//        String taskId = split[0];
+//        Integer num = Integer.parseInt(split[1]);
+//        try {
+//            List<PageData> taskList = (List<PageData>) dao.findForList("TaskMapper.queryTaskByUserId", taskId);
+//            PageData task = (PageData) taskList.get(0).clone();
+//            //判断是否下发
+//            int frequency = Integer.parseInt(task.get("frequency").toString());
+//            if (frequency != 0) {
+//                if (num == frequency) {
+//                    List<String> excelListId = new ArrayList<String>();
+//                    for (PageData pageData : taskList) {
+//                        excelListId.add(String.valueOf(pageData.get("excel_id")));
+//                    }
+//                    task.put("excelId", excelListId);
+//                    List<PageData> taskDetails = new ArrayList<PageData>();
+//                    List<PageData> taskCensorIds = (List<PageData>) dao.findForList("TaskMapper.queryTaskByUserCensor", String.valueOf(taskList.get(0).get("id")));
+//                    for (PageData pageData : taskCensorIds) {
+//                        List<String> taskDetailIds = (List<String>) dao.findForObject("TaskMapper.queryTaskByUserCensorDetail", String.valueOf(taskList.get(0).get("id")));
+//                        for (PageData taskDetail : taskDetails) {
+//                            taskDetail.put("userId", pageData.get("user_id"));
+//                            taskDetail.put("module", taskDetailIds);
+//                        }
+//                    }
+//                    task.put("taskDetails", taskDetails);
+//                    Integer starTimeSql = (Integer) task.get("starTime");
+//                    Integer endTimeSql = (Integer) task.get("endTime");
+//                    Integer created_time = (Integer) task.get("created_time");
+//                    //任务时间计算
+//                    int i1 = (starTimeSql - created_time) / 1000;
+//                    Calendar newTime = Calendar.getInstance();
+//                    newTime.setTime(new Date());
+//                    //日期加秒
+//                    newTime.add(Calendar.SECOND, i1);
+//                    //拿到任务开始时间
+//                    Date taskStarTime = newTime.getTime();
+//                    task.put("star_time", taskStarTime);
+//                    newTime.setTime(taskStarTime);
+//                    int i2 = (endTimeSql - starTimeSql) / 1000;
+//                    //日期加秒
+//                    newTime.add(Calendar.SECOND, i2);
+//                    task.put("end_time", newTime.getTime());
+//                    taskService.createdTask(task);
+//                    //再次发送
+//                    int time = getTime(new Date(), frequency);
+//                    sender.sendDelayMsg(task.get("id").toString(), time);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//    }
+
+    /**
+     * 获取两个时间相差分钟数
+     *
+     * @param data
+     * @param frequency
+     * @return
+     * @throws ParseException
+     */
+    public int getTime(Date data, Integer frequency) throws ParseException {
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(data);
+        ca.add(Calendar.DATE, frequency);
+        data = ca.getTime();
+        int time = new Long(data.getTime() - System.nanoTime()).intValue();
+        return time;
+    }
+}

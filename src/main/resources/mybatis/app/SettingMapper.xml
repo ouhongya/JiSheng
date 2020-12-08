@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SettingMapper">
+    <select id="ExcelSettingMapper" resultType="pd">
+        select *
+        from sys_setting
+    </select>
+
+    <select id="findAllSystemSettings" resultType="pd">
+        select *
+        from sys_setting
+    </select>
+
+    <update id="updateMySQLSetting" parameterType="pd">
+        update sys_setting set
+        <if test="ip != null and ip != ''">
+            ip=#{ip},
+        </if>
+        <if test="port != null and port != ''">
+            port=#{port},
+        </if>
+        <if test="username != null and username != ''">
+            username=#{username},
+        </if>
+        <if test="password != null and password != ''">
+            password=#{password},
+        </if>
+        <if test="userId != null and userId != ''">
+            user_id=#{userId},
+        </if>
+        update_time=now()
+                where `type` = 1
+    </update>
+
+    <update id="updateRedisSetting" parameterType="pd">
+        update sys_setting set
+        <if test="ip != null and ip != ''">
+            ip=#{ip},
+        </if>
+        <if test="port != null and port != ''">
+            port=#{port},
+        </if>
+        <if test="username != null and username != ''">
+            username=#{username},
+        </if>
+        <if test="password != null and password != ''">
+            password=#{password},
+        </if>
+        <if test="userId != null and userId != ''">
+            user_id=#{userId},
+        </if>
+        update_time=now()
+                where `type` = 2
+    </update>
+
+    <update id="updateSmsSetting" parameterType="pd">
+        update sys_setting set
+        <if test="ip != null and ip != ''">
+            ip=#{ip},
+        </if>
+        <if test="port != null and port != ''">
+            port=#{port},
+        </if>
+        <if test="username != null and username != ''">
+            username=#{username},
+        </if>
+        <if test="password != null and password != ''">
+            password=#{password},
+        </if>
+        <if test="userId != null and userId != ''">
+            user_id=#{userId},
+        </if>
+        update_time=now()
+                where `type` = 3
+    </update>
+
+    <select id="queryUnitAll" parameterType="pd" resultType="pd">
+        select *
+        from sys_unit
+        where status = 1
+          and parent_id = 0
+    </select>
+
+    <insert id="addUnit" parameterType="pd">
+        insert into sys_unit
+        values (#{id}, #{name}, #{group}, #{phone}, #{address}, 0, 1, #{user_id}, now(), null)
+    </insert>
+
+    <select id="queryUnitOne" parameterType="pd" resultType="pd">
+        select *
+        from sys_unit
+        where UNIT_ID = #{id}
+          and status != 2
+    </select>
+
+    <select id="queryUnitExist" parameterType="pd" resultType="pd">
+        select *
+        from sys_unit
+        where name = #{name}
+          and status != 2
+    </select>
+
+    <update id="updateUnit" parameterType="pd">
+        update sys_unit set
+        <if test="name != null and name != ''">
+            name=#{name},
+        </if>
+        <if test="group != null and group != ''">
+            sys_unit.group=#{group},
+        </if>
+        <if test="phone != null and phone != ''">
+            phone=#{phone},
+        </if>
+        <if test="address != null and address != ''">
+            address=#{address},
+        </if>
+        <if test="userId != null and userId != ''">
+            user_id=#{userId},
+        </if>
+        update_time=now()
+                where UNIT_ID = #{id}
+    </update>
+
+    <update id="deleteUnit" parameterType="pd">
+        update sys_unit
+        set status=2
+        where UNIT_ID = #{id}
+    </update>
+
+    <select id="queryUnitAndSite" parameterType="page" resultType="pd">
+        select UNIT_ID,
+               name,
+               sys_unit.group,
+               phone,
+               address,
+               parent_id,
+               status,
+               user_id,
+               created_time,
+               update_time
+        from sys_unit
+                where status != 2
+                  and parent_id = 0
+        <if test="pd.search != null and pd.search != ''">
+            and name like concat('%', #{pd.search}, '%')
+        </if>
+        order by created_time desc
+    </select>
+
+    <select id="queryUnitAndSiteSearch" parameterType="page" resultType="pd">
+        select UNIT_ID,
+               name,
+               sys_unit.group,
+               phone,
+               address,
+               parent_id,
+               status,
+               user_id,
+               created_time,
+               update_time
+        from sys_unit
+                where status != 2
+        <if test="pd.search != null and pd.search != ''">
+            and name like concat('%', #{pd.search}, '%')
+        </if>
+        order by created_time desc
+    </select>
+
+    <select id="querySiteAll" resultType="pd">
+        select *
+        from sys_unit
+        where parent_id = #{id} and STATUS=1
+    </select>
+
+    <select id="querySiteOne" resultType="pd">
+        select *
+        from sys_unit
+        where UNIT_ID = #{id}
+          and parent_id != 0
+    </select>
+
+    <select id="querySiteOneExit" resultType="pd">
+        select *
+        from sys_unit
+        where name = #{name}
+          and status != 2
+    </select>
+
+    <insert id="createdSite" parameterType="pd">
+        insert into sys_unit
+                (UNIT_ID, name, sys_unit.GROUPUSER, phone, address, parent_id, status, user_id, created_time, update_time)
+        values (#{id}, #{name}, #{group}, #{phone}, #{address}, #{parent_id}, 1, #{userId}, now(), null)
+    </insert>
+
+    <update id="deleteSite" parameterType="pd">
+        update sys_unit
+        set status     = 2,
+            update_time=now()
+        where UNIT_ID = #{id}
+    </update>
+
+    <select id="datalistPage" parameterType="page" resultType="pd">
+        select tb.*, su.NAME
+        from tb_message tb
+        left join sys_user su on tb.user_id = su.USER_ID
+        where 1=1 and  tb.STATUS = 1
+        order by tb.created_time desc
+    </select>
+
+    <insert id="addBulletin" parameterType="pd">
+        insert into tb_message
+                (id,title,content,type,status,user_id,created_time, update_time)
+        VALUES (#{id},#{title}, #{content}, #{type}, 1, #{uid},#{created_time}, null)
+    </insert>
+
+    <select id="queryUserList" resultType="String">
+        select USER_ID
+        from sys_user
+    </select>
+
+    <insert id="addBulletinMQ" parameterType="pd">
+        insert into tb_message_user (message_id, STATUS, user_id, read_time)
+        values (#{id}, 2, #{user_id}, null);
+    </insert>
+
+    <update id="deleteBulletin" parameterType="java.lang.String">
+        update tb_message
+        set STATUS=2,
+            update_time=now()
+        where id = #{messageId}
+    </update>
+
+    <select id="datalistPage1" parameterType="page" resultType="pd">
+        SELECT
+            tb.*, tmu. STATUS AS VIEW
+        FROM
+            (SELECT tb_message.*,sys_user.name from tb_message left join sys_user on tb_message.user_id=sys_user.USER_ID) tb
+        LEFT JOIN tb_message_user tmu ON tb.id = tmu.message_id
+        LEFT JOIN sys_user ON tmu.user_id = sys_user.USER_ID
+        WHERE
+            tmu.user_id  =  #{pd.uid}
+        AND tb. STATUS = 1
+        GROUP BY
+            tb.id
+        ORDER BY
+            tb.created_time DESC
+    </select>
+
+    <select id="queryUserByBulletinNum" parameterType="pd" resultType="java.lang.Integer">
+        select count(tb.id)
+        from  tb_message tb
+        left join tb_message_user tmu on tb.id = tmu.message_id
+        left join sys_user on tmu.user_id = sys_user.USER_ID
+        where tmu.user_id = #{uid} and tb.STATUS=1  and  tmu.STATUS=2
+    </select>
+
+    <update id="readByBulletin" parameterType="pd">
+        update tb_message_user
+        set read_time=now(),
+            STATUS=1
+        where message_id = #{id}
+          and user_id = #{uid}
+    </update>
+
+    <select id="queryUserByRoue" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select tb_function.FUNCTION_ID
+        from sys_user
+                     left join sys_role on sys_user.ROLE_ID = sys_role.ROLE_ID
+                     left join tb_function on sys_role.FUNCTION_ID = tb_function.FUNCTION_ID
+        where sys_user.USER_ID = #{user_id}
+    </select>
+
+
+</mapper>

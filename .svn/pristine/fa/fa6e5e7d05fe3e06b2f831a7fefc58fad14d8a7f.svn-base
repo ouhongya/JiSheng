@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="RectifyMapper">
+    <select id="datalistPage1" parameterType="page" resultType="pd">
+        select tb_group_report.id,
+               tb_group_report.task_id,
+               tb_group_report.remark,
+               tb_group_report.unit_id,
+               tb_group_report.seit_id,
+               tb_group_report.total_issue,
+               tb_group_report.group_id,
+               tb_group_report.view_id,
+               tb_group_report.user_id,
+               tb_group_report.type,
+               tb_group_report.flag,
+               tb_group_report.status,
+               tb_group_report.created_time,
+               tb_group_report.update_time
+        from tb_group_report
+                     left join tb_group_refer_user on tb_group_report.id = tb_group_refer_user.group_report_id
+        where tb_group_refer_user.user_id = #{pd.uid}
+          and tb_group_report.status = 1
+        order by tb_group_report.created_time desc
+    </select>
+
+    <select id="queryUserTaskIssueList" parameterType="java.lang.String" resultType="pd">
+        select tb_group_report.task_id as id
+        from tb_group_report
+                     left join tb_group_refer_user on tb_group_report.id = tb_group_refer_user.group_report_id
+        where tb_group_refer_user.user_id = #{uid}
+          and tb_group_report.status = 1
+        order by tb_group_report.created_time desc
+    </select>
+
+    <select id="queryExcelName" parameterType="java.lang.String" resultType="pd">
+        select tb_excel.new_name
+        from tb_task_excel
+                     left join tb_excel on tb_task_excel.excel_id = tb_excel.id
+        where tb_task_excel.task_id = #{id}
+    </select>
+
+    <select id="queryCensorName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_user.NAME
+        from tb_report_user
+                     left join sys_user on tb_report_user.user_id = sys_user.USER_ID
+        where tb_report_user.group_report_id = #{id};
+    </select>
+
+    <select id="datalistPage2" parameterType="page" resultType="pd">
+        select tb_group_report.id,
+               tb_group_report.task_id,
+               tb_group_report.remark,
+               tb_group_report.unit_id,
+               tb_group_report.seit_id,
+               tb_group_report.total_issue,
+               tb_group_report.group_id,
+               tb_group_report.view_id,
+               tb_group_report.user_id,
+               tb_group_report.type,
+               tb_group_report.flag,
+               tb_group_report.status,
+               tb_group_report.created_time,
+               tb_group_report.update_time
+        from tb_group_report
+                     left join tb_group_refer_user on tb_group_report.id = tb_group_refer_user.group_report_id
+        where tb_group_refer_user.user_id = #{pd.uid}
+          and tb_group_report.status != 1
+        order by tb_group_report.created_time desc
+    </select>
+
+    <select id="datalistPage33" parameterType="page" resultType="pd">
+        select tb_group_report.id,
+               tb_group_report.unit_id,
+               tb_group_report.seit_id,
+               tb_group_report.total_issue,
+               tb_norm.NAME,
+               tb_group_report.group_id,
+               tb_group_report.flag,
+               tb_group_report.view_id,
+               tb_group_report.created_time
+        from tb_group_report
+                     left join tb_group_refer_user on tb_group_report.group_id = tb_group_refer_user.id
+                     left join tb_task on tb_group_report.task_id = tb_task.id
+                     left join tb_task_norm on tb_task.id = tb_task_norm.task_id
+                     left join tb_norm on tb_task_norm.norm_id = tb_norm.id
+        where tb_group_refer_user.id = #{pd.uid}
+          and tb_group_report.STATUS != 1
+        order by tb_group_report.created_time desc
+    </select>
+
+    <select id="queryUnitName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_unit.NAME
+        from sys_unit
+        where UNIT_ID = #{id};
+    </select>
+
+    <select id="queryCensorDateTime" parameterType="java.lang.String" resultType="java.lang.String">
+        select created_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+
+    <select id="queryCensorDateTime1" parameterType="java.lang.String" resultType="java.lang.String">
+        select created_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+    <select id="queryCensorDateTime11" parameterType="java.lang.String" resultType="java.lang.String">
+        select update_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+
+    <select id="queryCensorDateTime2" parameterType="java.lang.String" resultType="java.lang.String">
+        select tb_task_censor.update_time
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where tb_task.id = #{task_id}
+          and tb_task_censor.user_id = #{group_id}
+    </select>
+
+    <select id="queryCensorDateTime4" parameterType="java.lang.String" resultType="java.lang.String">
+        select created_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+    <select id="queryReportCensorUser3" parameterType="pd" resultType="pd">
+        select sys_user.NAME
+        from tb_task
+                     left join tb_task_user on tb_task.id = tb_task_user.task_id
+                     left join sys_user on tb_task_user.user_id = sys_user.USER_ID
+        where task_id = #{task_id}
+    </select>
+
+    <select id="queryCensorDateTime3" parameterType="java.lang.String" resultType="java.lang.String">
+        select tb_task.update_time
+        from tb_task
+        where tb_task.id = #{task_id}
+    </select>
+
+    <select id="queryUserByRoue" parameterType="pd" resultType="java.lang.Integer">
+        select tb_function.FUNCTION_ID
+        from sys_user
+                     left join sys_role on sys_user.ROLE_ID = sys_role.ROLE_ID
+                     left join tb_function on sys_role.FUNCTION_ID = tb_function.FUNCTION_ID
+        where sys_user.USER_ID = #{uid}
+        group by sys_user.USER_ID
+    </select>
+
+    <select id="queryUserName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_user.NAME
+        from sys_user
+        where sys_user.USER_ID = #{id}
+    </select>
+
+    <select id="questionsList" parameterType="page" resultType="pd">
+        select td.*, tti.*, ti.url
+        from tb_task_censor tc
+                     left join (select tb_task.id,
+                                       tb_task.NAME,
+                                       tb_task.STATUS,
+                                       tb_task.type,
+                                       tb_task.unit_id,
+                                       tb_task_detail.censor_id
+                                from tb_task
+                                             left join tb_task_detail on task_id = tb_task_detail.task_id
+                                where tb_task_detail.task_id = #{task_id}) td
+                on tc.id = td.censor_id
+                     left join tb_task_row tr on td.id = tr.detail_id
+                     left join tb_task_issue tti on tr.id = tti.row_id
+                     left join tb_issue_img tii on tti.id = tii.issue_id
+                     left join tb_image ti on tii.image_id = ti.id;
+    </select>
+
+    <select id="questionsTaskList" parameterType="com.fh.entity.app.IssueVo" resultType="pd">
+        select task.id,
+        task.NAME,
+        task.unit_id,
+        task.site_id,
+        task.star_time,
+        task.end_time,
+        task.location,
+        task.group_id,
+        task.frequency,
+        task.STATUS,
+        task.type,
+        task.remark,
+        task.total_censor,
+        task.censor,
+        task.total_score,
+        task.score,
+        task.total_issue,
+        task.solved_issue,
+        task.created_time,
+        task.update_time,
+        task.user_id,
+        task.userId
+        from (select tb_task.*, tb_task_user.user_id as userId
+        from tb_task
+        left join tb_task_user on tb_task.id = tb_task_user.task_id
+        where tb_task.STATUS != 2
+        and tb_task.STATUS != 12
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" index="index" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        ) task
+        left join (
+        select * from tb_task_excel
+        <if test="normId != null and normId.size() > 0">
+            where excel_id
+            <foreach collection="normId" open="in(" separator="," item="item" close=")">
+                #{item}
+            </foreach>
+        </if>
+        ) excel on task.id = excel.task_id
+        where task.total_issue != 0
+        <if test="type != null and type != ''">
+            and task.type != 3
+        </if>
+        <if test="status != null and status.size() > 0">
+            and `STATUS`
+            <foreach collection="status" item="item" separator="," open="in(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="endTime != null and endTime != '' and starTime != null and starTime != ''">
+            and task.created_time between #{starTime} and #{endTime}
+        </if>
+        <if test="userId != null and userId.size() > 0">
+            and task.userId
+            <foreach collection="userId" item="item" separator="," open="in(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by task.id
+    </select>
+
+    <select id="questionsTaskOne" parameterType="pd" resultType="pd">
+        select task.id,
+               task.NAME,
+               task.unit_id,
+               task.site_id,
+               task.star_time,
+               task.end_time,
+               task.location,
+               task.group_id,
+               task.frequency,
+               task.STATUS,
+               task.type,
+               task.remark,
+               task.total_censor,
+               task.censor,
+               task.total_score,
+               task.score,
+               task.total_issue,
+               task.solved_issue,
+               task.created_time,
+               task.update_time,
+               task.user_id
+        from tb_task as task
+        where task.id = #{taskId}
+        group by task.id
+    </select>
+
+    <select id="queryTaskIssueModel" parameterType="pd" resultType="pd">
+        select tb_task_detail.norm_id, tb_task_detail.norm_detail_id
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+        where tb_task.id = #{id}
+          and tb_task_detail.total_issue != 0
+    </select>
+
+    <select id="queryTaskIssueModelList" parameterType="java.util.ArrayList" resultType="pd">
+        select tb_task_detail.norm_id, tb_task_detail.norm_detail_id
+        from tb_task
+        left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+        where tb_task.id
+        <foreach collection="list" item="item" open="in(" separator="," close=")">
+            #{item}
+        </foreach>
+        and tb_task_detail.total_issue != 0
+    </select>
+
+    <select id="datalistPage4" parameterType="page" resultType="pd">
+        select *
+        from tb_excel_user
+                     left join tb_excel on tb_excel_user.excel_id = tb_excel.id
+                     left join tb_norm on tb_excel.id = tb_norm.excel_id
+                     left join tb_task_norm on tb_norm.id = tb_task_norm.norm_id
+                     left join tb_task on tb_task_norm.task_id = tb_task.id
+    </select>
+
+    <select id="datalistPage5" parameterType="page" resultType="pd">
+    </select>
+
+    <select id="queryTaskReport" parameterType="pd" resultType="pd">
+        select id,
+               task_id,
+               remark,
+               unit_id,
+               seit_id,
+               total_issue,
+               group_id,
+               view_id,
+               user_id,
+               type,
+               flag,
+               STATUS,
+               created_time,
+               update_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+    <update id="updateTaskStatus" parameterType="pd">
+        update tb_task
+        set STATUS=#{status}
+        where id = #{task_id}
+    </update>
+
+    <update id="updateTaskCensorStatus" parameterType="pd">
+        update tb_task_censor
+        set STATUS=#{status}
+        where id = #{censorId}
+    </update>
+
+    <select id="queryTaskCensorIds" parameterType="pd" resultType="java.lang.String">
+        select tb_task_censor.id
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where task_id = #{task_id}
+          and tb_task_censor.user_id = #{uid}
+        group by tb_task_censor.id
+    </select>
+    <select id="queryTaskCensorIds1" parameterType="pd" resultType="java.lang.String">
+        select tb_task_censor.id
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where task_id = #{task_id}
+          and tb_task_censor.user_id = #{group_id}
+        group by tb_task_censor.id
+    </select>
+
+    <update id="updateTaskReportRemarkAndStatus" parameterType="pd">
+        update tb_group_report
+        set STATUS=#{status},
+            user_id=#{uid},
+            remark=#{remark},
+            update_time=now()
+        where id = #{id}
+    </update>
+
+    <update id="queryReportMessage" parameterType="pd">
+        update tb_group_refer_user
+        set STATUS=1
+        where id = #{id}
+    </update>
+
+    <select id="datalistPage10" parameterType="pd" resultType="pd">
+        select tb_norm.NAME, tb_task.*
+        from tb_task_user
+                     left join tb_task on tb_task_user.task_id = tb_task.id
+                     left join tb_task_norm on tb_task.id = tb_task_norm.task_id
+                     left join tb_norm on tb_task_norm.norm_id = tb_norm.id
+        where tb_task_user.user_id = #{user_id}
+          and tb_task.total_issue != tb_task.solved_issue
+    </select>
+    <select id="queryTaskIssueList" parameterType="pd" resultType="java.lang.String">
+        select detail.*, task_row.*, tb_task_issue.*, tb_image.url, tb_image.STATUS
+        from (select tb_task_detail.*, sys_user.NAME
+              from tb_task_detail
+                           left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+                           left join sys_user on tb_task_censor.id = sys_user.USER_ID
+              where tb_task_detail.task_id = #{id}) detail
+                     left join (select tb_task_row.id,
+                                       tb_task_row.detail_id,
+                                       tb_norm_detail.item,
+                                       tb_norm.name,
+                                       tb_norm_detail.serial
+                                from tb_task_row
+                                             left join tb_norm_detail on tb_task_row.norm_detail_id = tb_norm_detail.id
+                                             left join tb_norm on tb_norm_detail.norm_id = tb_norm.id) task_row
+                on detail.id = task_row.detail_id
+                     left join tb_task_issue on task_row.id = tb_task_issue.id
+                     left join tb_issue_img on tb_task_issue.id = tb_issue_img.issue_id
+                     left join tb_image on tb_issue_img.image_id = tb_image.id and tb_image.STATUS = 1
+    </select>
+
+    <select id="queryOneTaskIssueList" parameterType="pd" resultType="pd">
+        select tb_task_detail.norm_id, tb_task_detail.norm_detail_id
+        from tb_task_detail
+                     left join tb_task_row on tb_task_detail.id = tb_task_row.detail_id
+                     left join tb_task_issue on tb_task_row.id = tb_task_issue.row_id
+        where tb_task_detail.task_id = #{task_id}
+    </select>
+
+    <select id="queryReportUser" parameterType="java.lang.String" resultType="pd">
+        select id,
+               task_id,
+               remark,
+               unit_id,
+               seit_id,
+               total_issue,
+               group_id,
+               view_id,
+               ifnull(user_id, null) as user_id,
+               type,
+               flag,
+               STATUS,
+               created_time,
+               update_time
+        from tb_group_report
+        where id = #{id}
+    </select>
+
+    <select id="queryReportCensorUser" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT NAME
+        FROM sys_user
+        WHERE USER_ID = #{id}
+    </select>
+
+    <select id="queryReportGroupUser" parameterType="java.lang.String" resultType="pd">
+        select sys_user.NAME
+        from tb_group_refer_user
+                     left join sys_user on tb_group_refer_user.user_id = sys_user.USER_ID
+        where group_report_id = #{id}
+    </select>
+
+    <select id="queryTaskToOne" parameterType="java.lang.String" resultType="pd">
+        select *
+        from tb_task
+        where tb_task.id = #{id}
+    </select>
+
+    <insert id="createdTask" parameterType="pd">
+        insert into tb_task
+                (id, NAME, unit_id, site_id, star_time, end_time, location, group_id, frequency, STATUS,
+                 type, remark, total_censor, censor, total_score, score, total_issue, solved_issue, created_time,
+                 update_time, user_id)
+        values (#{id}, #{NAME}, #{unit_id}, #{site_id}, #{star_time}, #{end_time}, #{location}, #{group_id},
+                #{frequency}, #{STATUS}, #{type}, #{remark}, #{total_censor}, #{censor}, #{total_score},
+                #{score}, #{total_issue}, #{solved_issue}, #{created_time}, null, #{user_id})
+    </insert>
+
+    <update id="updateTask" parameterType="java.lang.String">
+        update tb_task
+        set STATUS=11
+        where id = #{task_id}
+    </update>
+
+    <update id="updateReport" parameterType="pd">
+        update tb_group_report
+        set remark=#{remark},
+            user_id=#{uid},
+            STATUS=4,
+            update_time=now()
+        where id = #{report_id}
+    </update>
+
+    <select id="queryTaskToOneIssueList" parameterType="java.lang.String" resultType="com.fh.entity.app.TaskIssueList">
+        select ti.id,
+               ti.row_id,
+               ti.conent,
+               ti.type,
+               ti.score,
+               ti.STATUS,
+               ti.remark,
+               tg.id           as imageId,
+               tg.name         as imageName,
+               tg.url          as imgUrl,
+               tg.STATUS       as imageStatus,
+               tg.created_time as imageCreated_time,
+               tg.update_time  as imageCreated_time
+        from tb_task_issue ti
+                     left join tb_issue_img tii on ti.id = tii.issue_id
+                     left join tb_image tg on tii.image_id = tg.id
+        where ti.id = #{id}
+    </select>
+
+    <select id="queryUserByTask1" parameterType="pd" resultType="pd">
+        select tb_task.NAME, tb_task.id, tb_task.type
+        from tb_group_refer_user
+                     left join tb_group_report on tb_group_refer_user.group_report_id = tb_group_report.id
+                     left join tb_task on tb_group_report.task_id = tb_task.id
+        where tb_group_refer_user.user_id = #{uid}
+          and tb_task.STATUS != 2
+          and tb_task.STATUS != 12
+        group by tb_task.id;
+    </select>
+
+    <select id="queryUserByTask2" parameterType="pd" resultType="pd">
+        select tb_task.NAME, tb_task.id, tb_task.type
+        from tb_task
+        where tb_task.user_id = #{uid}
+          and tb_task.group_id = #{uid}
+          and tb_task.STATUS != 2
+          and tb_task.STATUS != 12
+        order by tb_task.id;
+    </select>
+    <select id="queryUserByTask3" parameterType="pd" resultType="pd">
+        select tb_task.NAME, tb_task.id
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where tb_task.STATUS != 2
+          and tb_task.STATUS != 12
+          and tb_task.type != 3
+          and tb_task_censor.user_id = #{uid}
+        group by tb_task_censor.id
+        union
+        select tb_task.NAME, tb_task.id
+        from tb_task
+        where tb_task.STATUS != 2
+                and tb_task.STATUS != 12 and tb_task.user_id = #{uid}
+           or tb_task.group_id = #{uid}
+        group by tb_task.id
+    </select>
+
+    <select id="queryUserByName" parameterType="pd" resultType="java.lang.String">
+        select sys_user.NAME
+        from sys_user
+        where USER_ID = #{uid}
+    </select>
+
+    <select id="queryUserByTaskToUser" parameterType="pd" resultType="pd">
+        select sys_user.USER_ID, sys_user.NAME
+        from tb_task
+                     left join tb_task_user on tb_task.id = tb_task_user.task_id
+                     left join sys_user on tb_task_user.user_id = sys_user.USER_ID
+        where tb_task.id = #{id}
+          and sys_user.NAME is not null
+        group by sys_user.USER_ID
+    </select>
+
+    <select id="queryTaskToNorm" resultType="pd" parameterType="java.lang.String">
+        select tb_norm.NAME as name
+        from tb_task_norm
+                     left join tb_norm on tb_task_norm.norm_id = tb_norm.id
+        where tb_task_norm.task_id = #{id}
+    </select>
+
+
+    <resultMap id="censorRowListMap" type="com.fh.entity.app.CensorRow">
+        <result column="id" property="id"/>
+        <result column="detail_id" property="task_detail_id"/>
+        <result column="row_serial" property="row_serial"/>
+        <result column="row_untitled" property="row_untitled"/>
+        <result column="row_content" property="row_content"/>
+        <result column="row_total_score" property="row_total_score"/>
+        <result column="total_score" property="total_score"/>
+        <result column="score" property="score"/>
+        <result column="row_MODE" property="row_MODE"/>
+        <result column="row_standard" property="row_standard"/>
+        <result column="row_other" property="row_other"/>
+        <result column="row_item" property="row_item"/>
+        <result column="operating_time" property="operating_time"/>
+        <collection property="censorRowIssueList"
+                    ofType="com.fh.entity.app.CensorRowIssue"
+                    javaType="java.util.List"
+                    select="censorRowIssueList"
+                    column="id"/>
+    </resultMap>
+
+    <resultMap id="censorRowIssueListMap" type="com.fh.entity.app.CensorRowIssue">
+        <result column="task_issue_id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="issue_score" property="score"/>
+        <result column="STATUS" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="row_id" property="row_id"/>
+        <result column="serial" property="serial"/>
+        <result column="name" property="name"/>
+        <collection property="censorRowIssueImageList"
+                    ofType="com.fh.entity.app.CensorRowIssueImage"
+                    javaType="java.util.List"
+                    select="censorRowIssueImageList"
+                    column="task_issue_id"/>
+    </resultMap>
+
+    <select id="censorRowList" parameterType="java.lang.String" resultMap="censorRowListMap">
+        SELECT tb_task_detail.id               AS task_detail_id,
+               tb_task_row.id,
+               tb_task_row.detail_id,
+               tb_task_row.operating_time,
+               tb_task_row.STATUS              as status,
+               tb_task_row.total_score         as total_score,
+               tb_task_row.score               as score,
+               tb_task_row.issue               as issue,
+               tb_norm_detail.serial           AS row_serial,
+               tb_norm_detail.item             AS row_item,
+               tb_norm_detail.untitled         AS row_untitled,
+               tb_norm_detail.content          AS row_content,
+               tb_norm_detail.total_score      AS row_total_score,
+               ifnull(tb_norm_detail.score, 0) as row_score,
+               tb_norm_detail.MODE             AS row_MODE,
+               tb_norm_detail.standard         AS row_standard,
+               tb_norm_detail.other            AS row_other
+        FROM tb_task_detail
+                     left join tb_task_row on tb_task_detail.id = tb_task_row.detail_id
+                     LEFT JOIN tb_norm_detail ON tb_task_row.norm_detail_id = tb_norm_detail.id
+        where tb_task_detail.task_id = #{id}
+          and tb_task_row.issue != 0
+    </select>
+
+    <select id="censorRowList1" parameterType="java.util.List" resultMap="censorRowListMap">
+        SELECT tb_task_detail.id AS task_detail_id,
+        tb_task_row.id,
+        tb_task_row.detail_id,
+        tb_task_row.operating_time,
+        tb_task_row.STATUS as status,
+        tb_task_row.total_score as total_score,
+        tb_task_row.score as score,
+        tb_task_row.issue as issue,
+        tb_norm_detail.serial AS row_serial,
+        tb_norm_detail.item AS row_item,
+        tb_norm_detail.untitled AS row_untitled,
+        tb_norm_detail.content AS row_content,
+        tb_norm_detail.total_score AS row_total_score,
+        ifnull(tb_norm_detail.score, 0) as row_score,
+        tb_norm_detail.MODE AS row_MODE,
+        tb_norm_detail.standard AS row_standard,
+        tb_norm_detail.other AS row_other
+        FROM tb_task_detail
+        left join tb_task_row on tb_task_detail.id = tb_task_row.detail_id
+        left join tb_norm_detail ON tb_task_row.norm_detail_id = tb_norm_detail.id
+        where tb_task_detail.id
+        <foreach collection="list" open="in(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+        and tb_task_row.issue != 0
+    </select>
+
+    <select id="censorRowIssueList" parameterType="java.lang.String" resultMap="censorRowIssueListMap">
+        SELECT tb_task_issue.id      AS task_issue_id,
+               tb_task_issue.id,
+               tb_task_issue.conent  as content,
+               tb_task_issue.type,
+               tb_task_issue.score   AS issue_score,
+               tb_norm_detail.serial as serial,
+               tb_norm.NAME          as name,
+               tb_task_issue.`STATUS`,
+               tb_task_issue.remark,
+               tb_task_issue.row_id
+        FROM tb_norm
+                     left join
+                     tb_norm_detail on tb_norm.id = tb_norm_detail.norm_id
+                     left join
+                     tb_task_row on tb_norm_detail.id = tb_task_row.norm_detail_id
+                     left join tb_task_issue on tb_task_row.id = tb_task_issue.row_id
+        where row_id = #{id}
+        group by tb_task_issue.id
+        order by tb_norm_detail.serial desc
+    </select>
+
+    <select id="censorRowIssueImageList" parameterType="java.lang.String"
+            resultType="com.fh.entity.app.CensorRowIssueImage">
+        select tb_task_issue.id,
+               tb_image.url,
+               tb_image.name
+        from tb_task_issue
+                     left join tb_issue_img on tb_task_issue.id = tb_issue_img.issue_id
+                     LEFT JOIN tb_image ON tb_issue_img.image_id = tb_image.id and tb_image.STATUS = 1
+        where tb_task_issue.id = #{task_issue_id}
+    </select>
+
+    <select id="queryTaskToUnit" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_unit.NAME as name
+        from sys_unit
+        where sys_unit.UNIT_ID = #{unit_id}
+    </select>
+
+    <select id="RowUserName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_user.NAME
+        from sys_user
+        WHERE USER_ID = (select user_id
+                         from tb_task_censor
+                         where id = (select tb_task_detail.censor_id
+                                     from tb_task_detail
+                                     where id = #{id}))
+    </select>
+
+    <select id="queryUserNormList" parameterType="pd" resultType="pd">
+        SELECT tb_excel.new_name AS NAME,
+               tb_excel.id
+        from tb_excel
+        where id in (
+                SELECT tb_excel.id as id
+                from tb_excel
+                where tb_excel.user_id = #{uid}
+                UNION
+                SELECT tb_excel_user.excel_id as id
+                from tb_excel_user
+                where tb_excel_user.user_id = #{uid}
+                )
+        group by tb_excel.id and tb_excel.status = 1
+    </select>
+
+    <select id="queryIssueCensorList" parameterType="pd" resultType="pd">
+        select tb_task_detail.id
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where tb_task_censor.user_id = #{uid}
+           or tb_task.id = #{id}
+        group by tb_task_detail.id
+    </select>
+
+    <select id="queryExcelList" parameterType="java.lang.String" resultType="pd">
+        select id, new_name
+        from tb_excel
+    </select>
+
+    <select id="queryTaskExcelList" parameterType="java.util.ArrayList" resultType="pd">
+        select tb_excel.id as id from tb_excel left join tb_norm on tb_excel.id=tb_norm.excel_id where tb_norm.id
+        <foreach collection="list" open="in(" item="item" separator="," close=")">
+            #{item}
+        </foreach>
+        group by tb_excel.id
+    </select>
+
+    <select id="queryUserTaskIssueLists" parameterType="java.util.ArrayList" resultType="pd">
+        SELECT
+        tb_task_detail.id as task_detail_id,
+        tb_task_detail.norm_id,
+        tb_task_detail.norm_detail_id AS detailId,
+        tb_task_row.id,
+        tb_task_row.total_score,
+        tb_task_row.score
+        FROM
+        tb_task
+        LEFT JOIN tb_task_detail
+        ON tb_task.id = tb_task_detail.task_id
+        LEFT JOIN tb_task_row
+        ON tb_task_detail.id = tb_task_row.detail_id
+        WHERE tb_task.id
+        <foreach collection="list" open="in(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+        and tb_task_row.`issue`!=0
+        group by tb_task_row.id
+    </select>
+
+    <select id="queryTaskIssueScore" parameterType="java.lang.String" resultType="java.lang.String">
+        select score
+        from tb_task_row
+        where id = #{id}
+    </select>
+
+    <resultMap id="queryTaskDetailByRowAndIssueMap" type="com.fh.entity.app.DetailList">
+        <result property="norm_detail_id" column="norm_detail_id"/>
+        <collection property="issueList"
+                    javaType="java.util.List"
+                    ofType="com.fh.entity.app.DetailIssueList">
+            <result property="conent" column="conent"/>
+            <result property="type" column="type"/>
+            <result property="score" column="score"/>
+            <result property="status" column="STATUS"/>
+            <result property="remark" column="remark"/>
+            <collection property="img"
+                        javaType="java.util.List"
+                        ofType="com.fh.entity.app.img">
+                <result property="type" column="imgType"/>
+                <result property="url" column="url"/>
+                <result property="name" column="name"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="queryTaskDetailByRowAndIssue" parameterType="java.lang.String"
+            resultMap="queryTaskDetailByRowAndIssueMap">
+        select tb_task_row.norm_detail_id,
+               tb_task_issue.conent,
+               tb_task_issue.type,
+               tb_task_issue.score,
+               tb_task_issue.STATUS,
+               tb_task_issue.remark,
+               tb_image.url,
+               tb_image.type as imgType,
+               tb_image.name
+        from tb_task_detail
+                     left join tb_task_row on tb_task_detail.id = tb_task_row.detail_id
+                     left join tb_task_issue on tb_task_row.id = tb_task_issue.row_id
+                     left join tb_issue_img on tb_task_issue.id = tb_issue_img.issue_id
+                     left join tb_image on tb_issue_img.image_id = tb_image.id
+        where tb_task_detail.id = #{id}
+          and tb_image.STATUS = 1
+    </select>
+
+    <insert id="createdTaskDetailRowIssue" parameterType="pd">
+        insert into tb_task_issue(id, row_id, conent, type, score, STATUS, remark)
+        values (#{id}, #{row_id}, #{conent}, #{type}, #{score}, #{STATUS}, #{remark})
+    </insert>
+
+    <insert id="createdTaskDetailRowIssueBy" parameterType="pd">
+        insert into tb_issue_img(issue_id, image_id)
+        values (#{issue_id}, #{image_id})
+    </insert>
+
+    <insert id="createdTaskDetailRowIssueByImg" parameterType="pd">
+        insert into tb_image(id, name, url, type, STATUS, created_time, update_time)
+        values (#{id}, #{name}, #{url}, #{type}, #{STATUS}, #{created_time}, #{update_time})
+    </insert>
+
+    <insert id="insertTaskParam" parameterType="pd">
+        insert into tb_task_parent(task_id, parent_id)
+        VALUES (#{task_id}, #{parent_id})
+    </insert>
+
+    <select id="groupAllocationList" parameterType="pd" resultType="pd">
+        select tb_task_detail.norm_id, tb_task_detail.norm_detail_id
+        from tb_task_censor
+                     left join tb_task_detail on tb_task_censor.id = tb_task_detail.censor_id
+        where tb_task_censor.id = (
+                select tb_task_censor.id
+                from tb_task
+                             left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                             left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+                where tb_task.id = #{id}
+                  and tb_task_censor.user_id = #{uid}
+                group by tb_task_censor.id
+                )
+    </select>
+
+    <insert id="createdTaskDetail" parameterType="com.fh.entity.app.TaskDetail">
+        insert into tb_task_detail
+                (id, task_id, censor_id, norm_id, norm_detail_id, total_score, score, total_issue, solved_issue,
+                 check_item, to_check, status,
+                 created_time, update_time, child_id)
+        values (#{id}, #{task_id}, #{censor_id}, #{norm_id}, #{norm_detail_id}, #{total_score}, #{score},
+                #{total_issue}, #{solved_issue},
+                #{check_item}, #{to_check}, #{status}, #{created_time}, null, #{child_id})
+    </insert>
+
+    <select id="queryTaskGroupUser" parameterType="pd" resultType="pd">
+        select tb_task_detail.*
+        from tb_task
+                     left join tb_task_detail on tb_task.id = tb_task_detail.task_id
+                     left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where task_id = #{id}
+          and tb_task_censor.user_id = #{uid}
+        group by tb_task_censor.id
+    </select>
+
+    <update id="updateTaskCensorChildId" parameterType="pd">
+        update tb_task_detail
+        set censor_id= #{id}
+        where id = #{detailId}
+    </update>
+</mapper>

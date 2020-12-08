@@ -1,0 +1,42 @@
+package com.fh.entity.app;
+
+import java.util.List;
+
+public class reportIssueListDetail {
+    private String id;
+    private String rectify_measures;
+    private String rectify_remark;
+    private List<String> img;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRectify_measures() {
+        return rectify_measures;
+    }
+
+    public void setRectify_measures(String rectify_measures) {
+        this.rectify_measures = rectify_measures;
+    }
+
+    public String getRectify_remark() {
+        return rectify_remark;
+    }
+
+    public void setRectify_remark(String rectify_remark) {
+        this.rectify_remark = rectify_remark;
+    }
+
+    public List<String> getImg() {
+        return img;
+    }
+
+    public void setImg(List<String> img) {
+        this.img = img;
+    }
+}

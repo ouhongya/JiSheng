@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StatisticsMapper">
+    <select id="queryUnitList" parameterType="java.lang.String" resultType="pd">
+        select sys_unit.UNIT_ID as id, sys_unit.NAME as name
+        from tb_task
+                     left join sys_unit on tb_task.unit_id = sys_unit.UNIT_ID
+        where tb_task.id = #{id}
+    </select>
+
+    <select id="queryTaskSchedule" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        SELECT SUM(ss.general_inspection) AS total_censor, SUM(ss.checked) AS censor FROM (
+        select task_censor.* from (
+        select task.*
+        from (select * from tb_task where 1=1
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="userId != null and userId.size() > 0">
+            or tb_task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or tb_task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and
+        tb_task.STATUS = 10
+        ) task
+        left join (select * from tb_task_excel where 1=1
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>)
+        excel ON task.id = excel.task_id where 1=1
+        group by task.id
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join (select * from tb_task_censor
+        where 1=1
+        <if test="userId != null and userId.size() > 0">
+            or tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ) task_censor on tb_task_detail.censor_id = task_censor.id
+        GROUP BY task_censor.id
+        ) ss
+    </select>
+
+    <select id="queryTaskSiteList" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        SELECT ss.unit_id, sys_unit.NAME as name FROM (
+        select task.* from (
+        select *
+        from tb_task
+        left join tb_task_excel ON tb_task.id = tb_task_excel.task_id where tb_task.STATUS = 10
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="userId != null and userId.size() > 0">
+            or tb_task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or tb_task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        )
+        task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        <if test="userId != null and userId.size() > 0">
+            where tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY task.id
+        ) ss
+        left join sys_unit on ss.unit_id = sys_unit.UNIT_ID
+    </select>
+
+    <select id="queryTaskSiteToIssueList" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        SELECT SUM(ss.total_issue) AS totalIssue,
+        SUM(IFNULL(ss.total_score, 0)) - SUM(IFNULL(ss.score, 0)) AS totalScore FROM (
+        select task.* from (
+        select tb_task.*
+        from tb_task
+        left join tb_task_excel ON tb_task.id = tb_task_excel.task_id where tb_task.STATUS = 10
+        and tb_task.unit_id = #{siteId}
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        <if test="userId != null and userId.size() > 0">
+            where tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY task.id
+        ) ss
+        left join sys_unit on ss.site_id = sys_unit.UNIT_ID
+    </select>
+
+    <select id="queryTaskSiteToIssueList1" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        SELECT SUM(ss.total_issue) AS totalIssue,
+        SUM(IFNULL(ss.total_score, 0)) - SUM(IFNULL(ss.score, 0)) AS totalScore
+        FROM (
+        SELECT tb_task_censor.total_issue,
+        tb_task_censor.total_score,
+        tb_task_censor.score,
+        task.id,
+        task.site_id
+        FROM (
+        SELECT tb_task.*
+        FROM tb_task
+        LEFT JOIN tb_task_excel
+        ON tb_task.id = tb_task_excel.task_id
+        WHERE tb_task.STATUS = 10
+        and tb_task.unit_id = #{siteId}
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        <if test="userId != null and userId.size() > 0">
+            where tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY tb_task_censor.id ) ss
+        LEFT JOIN sys_unit
+        ON ss.site_id = sys_unit.UNIT_ID;
+    </select>
+
+    <select id="issueModuleIds" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        select task_detail.totalIssue, task_detail.totalScore, tb_norm_detail.item from (
+        select tb_task_detail.id,
+        sum(tb_task_detail.total_issue) as totalIssue,
+        IFNULL(sum(tb_task_detail.total_score), 0) - IFNULL(sum(tb_task_detail.score), 0) as totalScore,
+        tb_task_detail.norm_detail_id as task_detail_id
+        from (
+        select tb_task.*
+        from tb_task
+        left join tb_task_excel ON tb_task.id = tb_task_excel.task_id where tb_task.STATUS = 10
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        where tb_task_detail.total_issue != 0
+        <if test="userId != null and userId.size() > 0">
+            and tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY tb_task_detail.id
+        ) task_detail
+        left join tb_norm_detail
+        on task_detail.task_detail_id = tb_norm_detail.id
+        group by tb_norm_detail.id and task_detail.totalIssue != 0
+    </select>
+
+    <select id="issueCountIds" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        select task_detail.norm_detail_id as id, task_detail.rowId
+        from (
+        select tb_task.*
+        from tb_task
+        left join tb_task_excel ON tb_task.id = tb_task_excel.task_id where tb_task.STATUS = 10
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="userId != null and userId.size() > 0">
+            or tb_task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or tb_task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        ) task
+        left join (
+        select tb_task_detail.task_id, tb_task_row.norm_detail_id, tb_task_row.id as rowId
+        from tb_task_censor
+        left join tb_task_detail on tb_task_censor.id = tb_task_detail.censor_id
+        left join tb_task_row on tb_task_detail.id = tb_task_row.detail_id
+        <if test="userId != null and userId.size() > 0">
+            and tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ) task_detail on task.id = task_detail.task_id
+    </select>
+
+    <select id="queryNormDetailName" parameterType="java.lang.String" resultType="java.lang.String">
+        select tb_norm_detail.item
+        from tb_norm_detail
+        where tb_norm_detail.id = #{id}
+    </select>
+
+    <select id="queryTaskOverDetail" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        select task.*, sys_unit.name as unitName from (
+        select task1.unit_id,
+        task1.user_id,
+        task1.total_censor,
+        task1.censor,
+        task1.STATUS as status,
+        task1.total_issue as total_issue,
+        task1.type
+        from (select * from tb_task where 1=1
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="userId != null and userId.size() > 0">
+            or tb_task.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+            or tb_task.group_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        and tb_task.status = 10
+        and tb_task.type != 3
+        ) task1
+            left join tb_task_excel ON task1.id = tb_task_excel.task_id
+            where 1 = 1
+            <if test="excelId != null and excelId.size() > 0">
+                and tb_task_excel.excel_id
+                <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            group by task1.id
+        ) task
+        left join sys_unit on task.unit_id = sys_unit.UNIT_ID
+    </select>
+
+    <select id="queryTaskOverDetail2" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        select tb_task_censor.user_id,
+        task.type,
+        task.name as unitName,
+        tb_task_censor.STATUS as status,
+        tb_task_censor.general_inspection as total_censor,
+        tb_task_censor.checked as censor,
+        tb_task_censor.total_issue as total_issue
+        from (
+        select id, task1.name,task1.type
+        from (select * from tb_task where 1=1
+        <if test="taskId != null and taskId.size > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ) task1
+        left join tb_task_excel ON task1.id = tb_task_excel.task_id
+        where task1.STATUS = 10
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        <if test="userId != null and userId.size() > 0">
+            where tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task_censor.id
+    </select>
+
+    <select id="queryWorkload" parameterType="com.fh.entity.app.Statistics" resultType="pd">
+        SELECT ss.* FROM (
+        select tb_task_censor.user_id,
+        sum(tb_task_censor.checked) as checked,
+        sum(tb_task_censor.total_issue) as total_issue,
+        sum(tb_task_censor.solved_issue) solved_issue from (
+        select tb_task.*
+        from tb_task
+        left join tb_task_excel ON tb_task.id = tb_task_excel.task_id where tb_task.STATUS = 10
+        <if test="type != null and type != ''">
+            and tb_task.type != 3
+        </if>
+        <if test="taskId != null and taskId.size() > 0">
+            and tb_task.id
+            <foreach collection="taskId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        <if test="unitId != null and unitId.size() > 0">
+            and tb_task.unit_id
+            <foreach collection="unitId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="excelId != null and excelId.size() > 0">
+            and tb_task_excel.excel_id
+            <foreach collection="excelId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by tb_task.id
+        ) task
+        left join tb_task_detail on task.id = tb_task_detail.task_id
+        left join tb_task_censor on tb_task_detail.censor_id = tb_task_censor.id
+        <if test="userId != null and userId.size() > 0">
+            where tb_task_censor.user_id
+            <foreach collection="userId" item="item" open="in(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY tb_task_censor.user_id
+        ) ss
+    </select>
+    <select id="queryUserName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_user.name
+        from sys_user
+        where USER_ID = #{id}
+    </select>
+
+    <select id="queryUserByRole" parameterType="pd" resultType="java.lang.Integer">
+        select tb_function.FUNCTION_ID
+        from sys_user
+                     left join sys_role on sys_user.ROLE_ID = sys_role.ROLE_ID
+                     left join tb_function on sys_role.FUNCTION_ID = tb_function.FUNCTION_ID
+        where sys_user.USER_ID = #{uid}
+        group by sys_user.USER_ID
+    </select>
+
+
+    <select id="queryUnitName" parameterType="java.lang.String" resultType="java.lang.String">
+        select sys_unit.NAME
+        from sys_unit
+        where UNIT_ID = #{id}
+    </select>
+</mapper>

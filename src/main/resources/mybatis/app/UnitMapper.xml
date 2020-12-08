@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UnitMapper">
+
+
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into SYS_UNIT(
+			NAME,
+			GROUPUSER,
+			PHONE,
+			ADDRESS,
+			PARENT_ID,
+			STATUS,
+			USER_ID,
+			CREATED_TIME,
+			UPDATE_TIME,
+			UNIT_ID
+		) values (
+			#{NAME},
+			#{GROUP},
+			#{PHONE},
+			#{ADDRESS},
+			#{PARENT_ID},
+			#{STATUS},
+			#{USER_ID},
+			#{CREATED_TIME},
+			#{UPDATE_TIME},
+			#{UNIT_ID}
+		)
+	</insert>
+
+
+
+
+	<!-- 删除-->
+	<update id="delete" parameterType="pd">
+		update  SYS_UNIT
+			set
+				STATUS = '2'
+			where
+				UNIT_ID = #{UNIT_ID}
+	</update>
+
+
+
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  SYS_UNIT
+			set
+				NAME = #{NAME},
+				GROUPUSER = #{GROUP},
+				PHONE = #{PHONE},
+				ADDRESS = #{ADDRESS},
+				PARENT_ID = #{PARENT_ID},
+				STATUS = #{STATUS},
+				USER_ID = #{USER_ID},
+				UPDATE_TIME = #{UPDATE_TIME}
+			where
+				UNIT_ID = #{UNIT_ID}
+	</update>
+
+
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			NAME,
+			GROUPUSER,
+			PHONE,
+			ADDRESS,
+			PARENT_ID,
+			STATUS,
+			USER_ID,
+			CREATED_TIME,
+			UPDATE_TIME,
+			UNIT_ID
+		from
+			SYS_UNIT
+		where
+			UNIT_ID = #{UNIT_ID}
+			and STATUS != '2'
+	</select>
+
+
+
+	<select id="findByNAMEpd" parameterType="pd" resultType="pd">
+		select
+			NAME,
+			GROUPUSER,
+			PHONE,
+			ADDRESS,
+			PARENT_ID,
+			STATUS,
+			USER_ID,
+			CREATED_TIME,
+			UPDATE_TIME,
+			UNIT_ID
+		from
+			SYS_UNIT
+		where
+			NAME = #{NAME}
+		and STATUS != '2'
+	</select>
+
+
+
+
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		a.NAME,
+		a.GROUPUSER,
+		a.PHONE,
+		a.ADDRESS,
+		a.PARENT_ID,
+		a.STATUS,
+		a.USER_ID,
+		a.CREATED_TIME,
+		a.UPDATE_TIME,
+		a.UNIT_ID
+		from
+		SYS_UNIT a
+		where
+		a.STATUS != '2'
+		and     a.PARENT_ID = '0'
+		<if test="pd.NAME!=null and pd.NAME!=''"><!-- 单位名称检索 -->
+			and a.NAME LIKE CONCAT(CONCAT('%', #{pd.NAME}),'%')
+		</if>
+	</select>
+
+	<!-- 列表(全部) -->
+	<select id="listAllone" parameterType="pd" resultType="pd">
+		select
+		a.NAME,
+		a.GROUPUSER,
+		a.PHONE,
+		a.ADDRESS,
+		a.PARENT_ID,
+		a.STATUS,
+		a.USER_ID,
+		a.CREATED_TIME,
+		a.UPDATE_TIME,
+		a.UNIT_ID
+		from
+		SYS_UNIT a
+		where
+		a.STATUS != '2'
+		<if test="NAME!=null and NAME!=''"><!-- 单位名称检索 -->
+			and a.NAME LIKE CONCAT(CONCAT('%', #{NAME}),'%')
+		</if>
+	</select>
+
+
+
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.NAME,
+				a.GROUPUSER,
+				a.PHONE,
+				a.ADDRESS,
+				a.PARENT_ID,
+				a.STATUS,
+				a.USER_ID,
+				a.CREATED_TIME,
+				a.UPDATE_TIME,
+				a.UNIT_ID
+		from
+				SYS_UNIT a
+		where
+			    a.PARENT_ID = #{PARENT_ID}
+		and     a.STATUS != '2'
+	</select>
+
+
+	<!-- 列表(全部) -->
+	<select id="listAllNAME" parameterType="pd" resultType="pd">
+		select
+				a.NAME,
+				a.GROUPUSER,
+				a.PHONE,
+				a.ADDRESS,
+				a.PARENT_ID,
+				a.STATUS,
+				a.USER_ID,
+				a.CREATED_TIME,
+				a.UPDATE_TIME,
+				a.UNIT_ID
+		from
+				SYS_UNIT a
+		where
+			    a.PARENT_ID = #{PARENT_ID}
+		and     a.STATUS != '2'
+		<if test="name!=null and name!=''"><!-- 单位名称检索 -->
+			and a.NAME LIKE CONCAT(CONCAT('%', #{name}),'%')
+		</if>
+	</select>
+
+
+	<!-- 列表(全部) -->
+	<select id="listAllUNIT" parameterType="pd" resultType="pd">
+		select
+				a.NAME,
+				a.GROUPUSER,
+				a.PHONE,
+				a.ADDRESS,
+				a.PARENT_ID,
+				a.STATUS,
+				a.USER_ID,
+				a.CREATED_TIME,
+				a.UPDATE_TIME,
+				a.UNIT_ID
+		from
+				SYS_UNIT a
+		where
+	            a.STATUS != '2'
+	</select>
+
+
+	<!-- 列表(全部) -->
+	<select id="listtop" parameterType="pd" resultType="pd">
+		select
+				a.NAME,
+				a.GROUPUSER,
+				a.PHONE,
+				a.ADDRESS,
+				a.PARENT_ID,
+				a.STATUS,
+				a.USER_ID,
+				a.CREATED_TIME,
+				a.UPDATE_TIME,
+				a.UNIT_ID
+		from
+				SYS_UNIT a
+		where
+			    a.STATUS != '2'
+		and     a.PARENT_ID = '0'
+	</select>
+
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from SYS_UNIT
+		where
+		UNIT_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+
+
+
+	<!-- 列表(全部) -->
+	<select id="listAllByIds" parameterType="String" resultType="pd">
+		select
+		a.NAME,
+		a.GROUPUSER,
+		a.PHONE,
+		a.ADDRESS,
+		a.PARENT_ID,
+		a.UNIT_ID
+		from
+		SYS_UNIT a
+
+		where   a.STATUS != '2'
+
+		and     UNIT_ID in
+
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+
+	</select>
+
+</mapper>
